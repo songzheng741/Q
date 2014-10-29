@@ -2,7 +2,8 @@ require.config({
     baseUrl: 'core',
 
     path: {
-        'ajax': 'ajax'
+        'ajax': 'ajax',
+        'utils': 'utils'
     }
 
 });

@@ -1,31 +1,29 @@
-define(function(){
-    var ajax = {};
+define(['utils'], function(utils){
 
-    var xhr = (function() {
-        var _xhr = null;
+    var createXhrObject = (function(){
+        var fn = 'XMLHttpRequest()';
         try {
-            _xhr = new XMLHttpRequest();
+            new ActiveXObject('Msxml2.XMLHTTP');
+            fn = "ActiveXObject('Msxml2.XMLHTTP')";
         } catch (e) {
-            var versions = ['MSXML2.XMLHttp.6.0',
-                            'MSXML2.XMLHttp.3.0',
-                            'MSXML2.XMLHttp'];
-            for (var i = 0, len = versions.length; i < len; i++) {
-                try {
-                    _xhr = new ActiveXObject(versions[i]);
-                    return _xhr;
-                } catch (e) {
-                    continue;
-                }
+            try {
+                new ActiveXObject('Microsoft.XMLHTTP');
+                fn = "ActiveXObject('Microsoft.XMLHTTP')";
+            } catch (e) {
             }
         }
-        if(!_xhr) {
-            return _xhr;
-        } else {
-            throw new Error('Browser is not support Ajax!');
-        }
-        return _xhr;
+        return new Function('return new ' + fn);
     })();
 
-    console.log(xhr);
+    var xhr = createXhrObject();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState == 4) {
+            if ((xhr.status >= 200 && xhr.status < 300) || xhr.status == 304) {
+                console.log(xhr.getAllResponseHeaders());
+            }
+        }
+    }
+    xhr.open('get', 'core/test.json', true);
+    xhr.send(null);
 
 });
