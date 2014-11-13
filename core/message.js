@@ -176,8 +176,17 @@
     var Message = {
         last:'',
         postMessage: function(url, msg) {
+            if (!msg) {
+                return;
+            }
             var sender = fixUrl(self.location.href);
-            if (msg && msg.toString().length < 100) {
+            var len;
+            if (isJSObject(msg)) {
+                len = JSON.stringify(msg).length;
+            } else {
+                len = msg.length;
+            }
+            if (len < 100) {
                 if (store) {
                     var packmsg = {"msg": msg, "to": fixUrl(url), "timeStamp": new Date().getTime()};
                     store.set(sender, packmsg);
