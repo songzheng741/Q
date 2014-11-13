@@ -1,23 +1,35 @@
 ;(function(w){
+    var DOC = self.document;
+    var STORENAME = "messageQ";
+    var scriptTag = 'script';
 
     var store = {};
     store.set = function(key, value) {};
     store.get = function(key){};
     store.remove = function(key){};
 
+    if (!w.store) {
+        w.store = store;
+    }
+
     var supportLocalStorage = false;
+    var supportUserData = false;
     (function(){
         try {
             if (w.localStorage && w['localStorage']) {
                 supportLocalStorage = true;
             }
+            if(DOC.documentElement.addBehavior) {
+                supportUserData = true;
+            }
         } catch (e) {
         }
     })();
 
+    var hasOwn = Object.prototype.hasOwnProperty;
     function isJSObject(obj) {
         try {
-            if (a.constructor && hasOwn.call(obj.constructor.prototype, "isPrototypeOf")) {
+            if (obj.constructor && hasOwn.call(obj.constructor.prototype, "isPrototypeOf")) {
                 return true;
             }
         } catch (e) {
@@ -26,54 +38,182 @@
         return false;
     }
 
-    if (supportLocalStorage) {//W3C
-        store.set = function(key, value) {
-            if (!value) {
-                localStorage.removeItem(key);
-                return this;
-            } else if (isJSObject(value)) {
-                localStorage.setItem(key, JSON.stringify(value));
-                return this;
+    var storage,
+        storageOwner,
+        storageContainer;
+    if (supportUserData) {
+        storage = (function() {
+            var storeDIV;
+            try {
+                //userData可以跨目录的关键
+                //@see method aopIEUserData
+                storageContainer = new ActiveXObject('htmlfile')
+                storageContainer.open();
+                storageContainer.write('<'+scriptTag+'>document.w=window</'+scriptTag+'><iframe src="/favicon.ico"></iframe>');
+                storageContainer.close();
+                storageOwner = storageContainer.w.frames[0].document;
+                storeDIV = storageOwner.createElement('div');
+            } catch(e) {
+                storeDIV = DOC.createElement('div');
+                storageOwner = DOC;
             }
-            localStorage.setItem(key, value);
-            return this;
-        }
-
-        var objStr = /^\{/;
-        store.get = function(key) {
-            var r = localStorage.getItem(key);
-            if (objStr.test(r)) {
-                try {
-                    return JSON.parse(r);
-                } catch (e) {
-                    return r;
-                }
-            }
-            return r;
-        }
-        store.remove = function(key) {
-            localStorage.removeItem(key);
-        }
-    } else {//IE,FireFox <= 3.6
-
+            return storeDIV;
+        })();
+    } else if (supportLocalStorage) {
+        storage = localStorage;
+    } else {
+        throw new Error('Your browser not support message.');
     }
 
+    /**
+     * 提取出setAttrbute,getAttribute,removeAttribute
+     * 公共部分作为切面
+     * @param func set,get,remove
+     * @param args
+     */
+    function aopIEUserData(func, args) {
+        storageOwner.appendChild(storage)
+        storage.addBehavior('#default#userData')
+        storage.load(STORENAME);
+
+        func.apply(storage, args);
+
+        storageOwner.removeChild(storage);
+    }
+
+    function setFunc(key, value) {
+        if (!value) {
+            return removeFunc(key);
+        }
+        if (supportUserData) {
+            return function(key, value) {
+                if (isJSObject(value)) {
+                    value = JSON.stringify(value);
+                }
+                aopIEUserData(function(){
+                    storage.setAttribute(key, value);
+                    storage.save(STORENAME);
+                }, [key, value]);
+            }
+        } else if (supportLocalStorage) {
+            return function(key, value) {
+                if (isJSObject(value)) {
+                    value = JSON.stringify(value);
+                }
+                storage.setItem(key, value);
+            }
+        }
+    }
+
+    var objStr = /^\{/;
+    function getFunc() {
+        if (supportUserData) {
+            return function(key) {
+                var r;
+                aopIEUserData(function(){
+                    r = storage.getAttribute(key);
+                }, [key]);
+                if (objStr.test(r)) {
+                    try {
+                        r = JSON.parse(r);
+                    } catch (e) {};
+                }
+                return r;
+            }
+        } else if (supportLocalStorage) {
+            return function(key) {
+                var r = storage.getItem(key);
+                if (objStr.test(r)) {
+                    try {
+                        r = JSON.parse(r);
+                    } catch (e) {};
+                }
+                return r;
+            }
+        }
+    }
+    function removeFunc() {
+        if(supportUserData) {
+            return function(key) {
+                aopIEUserData(function(){
+                    storage.removeAttribute(key);
+                    storage.save(STORENAME);
+                }, [key]);
+            }
+        } else if (supportLocalStorage) {
+            return function(key) {
+                storage.removeItem(key);
+            }
+        }
+    }
+
+    store.set = function(key ,value) {
+        setFunc(key, value)(key ,value);
+    };
+    store.get = function(key) {
+        return getFunc()(key);
+    }
+    store.remove = function(key) {
+        removeFunc()(key);
+    }
+
+    var forbiddenCharsRegex = new RegExp("[!\"#$%&'()*+,/\\\\:;<=>?@[\\]^`{|}~]", "g")
+    function fixUrl(key) {
+        return key.replace(/^d/, '___$&').replace(forbiddenCharsRegex, '___')
+    }
 
     var Message = {
-        postMessage: function(urls, msg) {
-            var sender = self.location.host;
-            if (store) {
-                store.set(sender, msg);
+        last:'',
+        postMessage: function(url, msg) {
+            var sender = fixUrl(self.location.href);
+            if (msg && msg.toString().length < 100) {
+                if (store) {
+                    var packmsg = {"msg": msg, "to": fixUrl(url), "timeStamp": new Date().getTime()};
+                    store.set(sender, packmsg);
+                }
+            } else {
+                throw new Error('send message must be lt 100 character');
             }
         },
         receiveMessage: function(url, callback) {
-            if (supportLocalStorage) {
-                
+            if (supportUserData) {
+                url = fixUrl(url);
+                if (!Message.timer) {
+                    Message.timer = setInterval(function(){
+                        if (!store.get(url) || store.get(url).to !== fixUrl(self.location.href)) {
+                            return;
+                        }
+                        var msg = store.get(url).msg;
+                        if (msg !== Message.last) {
+                            callback.call(this, msg);
+                        }
+                        Message.last = msg;
+                    }, 200);
+                    self.onunload = function(){
+                        clearInterval(Message.timer);
+                        Message.timer = '';
+                    }
+                }
+            } else {
+                function getMsg(e) {
+                    url = fixUrl(url);
+                    if (store.get(url).to !== fixUrl(self.location.href)) {
+                        return;
+                    }
+                    callback.call(this, store.get(url).msg);
+                }
+                if (self.attachEvent) {
+                    self.attachEvent("onstorage", getMsg, false);
+                }
+                if (self.addEventListener) {
+                    self.addEventListener("storage", getMsg, false);
+                    self.addEventListener("storage", getMsg, false);
+                }
             }
         }
     }
     if (!w.Message) {
-        w.Message;
+        w.Message = Message;
     }
 
 

@@ -3,9 +3,18 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
-    <script src="third-part/requirejs/require.js" data-main="core/main"></script>
+
 </head>
 <body>
-
+<script src="core/message.js">
+</script>
+<input type="text"/>
+<button onclick="send()">发送</button>
+<script>
+    function send() {
+        var value = document.getElementsByTagName('input')[0].value;
+        Message.postMessage('http://localhost:63342/my/Q/core/to.html',value);
+    }
+</script>
 </body>
 </html>
