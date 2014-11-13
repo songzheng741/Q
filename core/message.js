@@ -1,3 +1,14 @@
+/**
+ * 同源不同页之间通信工具方法
+ * 发送方页面:
+ * Message.postMessage('http://localhost:63342/my/Q/core/to.html',Math.random()*1000);
+ * 接收方页面:
+ * Message.receiveMessage('http://localhost:63342/my/Q/test.html', function(msg){
+ *      alert(msg);
+ * });
+ * @author songzheng
+ * @version 0.0.1
+ */
 ;(function(w){
     var DOC = self.document;
     var STORENAME = "messageQ";
