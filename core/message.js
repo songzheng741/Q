@@ -214,10 +214,9 @@
                     callback.call(this, store.get(url).msg);
                 }
                 if (self.attachEvent) {
-                    self.attachEvent("onstorage", getMsg, false);
+                    self.attachEvent("onstorage", getMsg);
                 }
                 if (self.addEventListener) {
-                    self.addEventListener("storage", getMsg, false);
                     self.addEventListener("storage", getMsg, false);
                 }
             }
