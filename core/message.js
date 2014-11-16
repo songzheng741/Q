@@ -173,10 +173,19 @@
         return key.replace(/^d/, '___$&').replace(forbiddenCharsRegex, '___')
     }
 
+    var path = /^\//;
+    function fixContextPath(url) {
+        var host = location.protocol + "//" + location.host;
+        if (path.test(url)) {
+            url = host + url;
+        }
+        return url;
+    }
     var Message = {
         last:'',
         postMessage: function(url, msg) {
             var sender = fixUrl(self.location.href);
+            url = fixContextPath(url);
             if (msg && msg.toString().length < 100) {
                 if (store) {
                     var packmsg = {"msg": msg, "to": fixUrl(url), "timeStamp": new Date().getTime()};
@@ -187,6 +196,7 @@
             }
         },
         receiveMessage: function(url, callback) {
+            url = fixContextPath(url);
             if (supportUserData) {
                 url = fixUrl(url);
                 if (!Message.timer) {
