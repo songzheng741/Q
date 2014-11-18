@@ -4,36 +4,46 @@
     <meta charset="UTF-8">
     <title></title>
     <script>
-        var callbacks = [];
-        callbacks.push(step2);
-        callbacks.push(step3);
-        callbacks.push(step4);
+        function Promise() {
+            this.callbacks = [];
+        }
+        Promise.prototype.then = function(fn) {
+            if (typeof fn === 'function') {
+                this.callbacks.push(fn);
+            }
+            return this;
+        }
+        Promise.prototype.resolve = function() {
+            this.callbacks.shift()(this);
+        }
 
         function step1() {
+            var promise = new Promise();
             setTimeout(function(){
                 console.log('执行步骤一');
-                callbacks.shift()();
+                promise.resolve();
             }, 1000)
+            return promise;
         }
-        function step2() {
+        function step2(promise) {
             setTimeout(function(){
                 console.log('执行步骤二');
-                callbacks.shift()();
+                promise.resolve();
             }, 1000)
         }
-        function step3() {
+        function step3(promise) {
             setTimeout(function(){
                 console.log('执行步骤三');
-                callbacks.shift()();
+                promise.resolve();
             }, 1000)
         }
-        function step4() {
+        function step4(promise) {
             setTimeout(function(){
                 console.log('执行步骤四');
             }, 1000)
         }
 
-        step1();
+        step1().then(step2).then(step3).then(step4);
     </script>
 
 </head>
