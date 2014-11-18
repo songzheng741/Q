@@ -1,6 +1,21 @@
-define(['utils'], function(utils){
-    var dom = {};
+define(['Q','utils'], function(Q, utils){
+    "use strict";
 
+    /**
+     * dom工具模块
+     * @module dom
+     * @requires Q
+     * @requires utils
+     */
+    var dom = Q.dom = {};
+
+    /**
+     * 返回两个节点的位置关系
+     * @method position
+     * @param node1
+     * @param node2
+     * @returns {number}
+     */
     dom.position = function(node1, node2){
         // 如果两个节点是同一个节点
         if (node1 === node2) {
@@ -54,5 +69,45 @@ define(['utils'], function(utils){
         return  2;
     }
 
+    var html5NodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer" +
+           "header|hgroup|mark|meter|nav|output|progress|section|summary|time|video";
+    var rhtml = /<|&#?\w+;/;
 
+    var createSafeFragment = dom.createSafeFragment = function(document) {
+        var list = html5NodeNames.split('|'),
+            safeFrag = document.createDocumentFragment();
+
+        while (list.length) {
+            safeFrag.createElement(list.pop());
+        }
+        return safeFrag;
+    }
+
+    /**
+     * 将html字符串转换为DOM节点
+     * @method html2DOM
+     * @param {string} htmlStr html字符串
+     * @returns {Node}
+     */
+    dom.html2DOM = function(htmlStr) {
+        var DOC = self.document;
+        if (typeof htmlStr !== 'string') {
+            return null;
+        } else if (!rhtml.test(htmlStr)){ //没有标签或特征直接生成textNode
+            return DOC.createTextNode(htmlStr);
+            /**
+             * 转化html字符串为dom节点
+             * (1)对有父类的元素进行包裹
+             * (2)对自关闭标签进行修复
+             * (3)用innerHTML将html字符串转化为DOM节点
+             * (4)去除包括的父元素
+             * (5)修复IE的bug
+             */
+        } else {
+            var fragment = createSafeFragment();
+        }
+    }
+
+
+    return Q;
 });

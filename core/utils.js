@@ -1,8 +1,8 @@
 /**
  * @module utils
  */
-define(function(){
-    var utils = {};
+define(['Q'], function(Q){
+    var utils = Q.utils = {};
 
     /**
      * 迭代对象或数组
@@ -40,8 +40,5 @@ define(function(){
            return obj.prototype.toString.apply(obj) === '[object ' + type + ']';
        }
     });
-    /**
-     * @export 导出utils模块
-     */
-    return utils;
+    return Q;
 });

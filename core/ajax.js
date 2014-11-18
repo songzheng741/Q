@@ -1,11 +1,12 @@
 /**
- * @module ajax ajax模块
+ * ajax模块
+ * @module ajax
  */
-define(['utils'], function(utils){
+define(['Q', 'utils'], function(Q, utils){
 
     "use strict";
 
-    var ajax = {};
+    var ajax = Q.ajax = {};
 
     var createXhrObject = (function() {
         var fnStr = 'XMLHttpRequest();';
@@ -36,8 +37,5 @@ define(['utils'], function(utils){
 
    }
 
-   /**
-    * @export 导出ajax模块
-    */
-   return ajax;
+   return Q;
 })

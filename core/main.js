@@ -1,14 +1,16 @@
 require.config({
     baseUrl: 'core',
-
     path: {
+        'Q': 'Q',
         'ajax': 'ajax',
-        'utils': 'utils'
+        'utils': 'utils',
+        'support': 'support'
     }
 
 });
 
 
-require(['ajax'], function(ajax){
-
+require(['support'], function(Q){
+        var div = document.getElementById('aa');
+        console.log(div);
 })

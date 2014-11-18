@@ -3,18 +3,40 @@
 <head lang="en">
     <meta charset="UTF-8">
     <title></title>
+    <script>
+        var callbacks = [];
+        callbacks.push(step2);
+        callbacks.push(step3);
+        callbacks.push(step4);
+
+        function step1() {
+            setTimeout(function(){
+                console.log('执行步骤一');
+                callbacks.shift()();
+            }, 1000)
+        }
+        function step2() {
+            setTimeout(function(){
+                console.log('执行步骤二');
+                callbacks.shift()();
+            }, 1000)
+        }
+        function step3() {
+            setTimeout(function(){
+                console.log('执行步骤三');
+                callbacks.shift()();
+            }, 1000)
+        }
+        function step4() {
+            setTimeout(function(){
+                console.log('执行步骤四');
+            }, 1000)
+        }
+
+        step1();
+    </script>
 
 </head>
 <body>
-<script src="core/message.js">
-</script>
-<input type="text"/>
-<button onclick="send()">发送</button>
-<script>
-    function send() {
-        var value = document.getElementsByTagName('input')[0].value;
-        Message.postMessage('/Q/core/to.html',value);
-    }
-</script>
 </body>
 </html>
