@@ -4,46 +4,62 @@
     <meta charset="UTF-8">
     <title></title>
     <script>
-        function Promise() {
-            this.callbacks = [];
-        }
-        Promise.prototype.then = function(fn) {
-            if (typeof fn === 'function') {
-                this.callbacks.push(fn);
+        function searchTwitter(term ,onload, onerror) {
+            var xhr, results, url;
+            url = 'http://search.twitter.com/search.json?rpp=100&q=' + term;
+            xhr = new XMLHttpRequest();
+            xhr.open('GET', url, true);
+
+            xhr.onload = function(e) {
+                if (this.status === 200) {
+                    results = JSON.parse(this.responseText);
+                    onload(results);
+                }
             }
-            return this;
-        }
-        Promise.prototype.resolve = function() {
-            this.callbacks.shift()(this);
+
+            xhr.onerror = function(e) {
+                onerror(e);
+            }
+
+            xhr.send();
         }
 
-        function step1() {
-            var promise = new Promise();
-            setTimeout(function(){
-                console.log('执行步骤一');
-                promise.resolve();
-            }, 1000)
-            return promise;
-        }
-        function step2(promise) {
-            setTimeout(function(){
-                console.log('执行步骤二');
-                promise.resolve();
-            }, 1000)
-        }
-        function step3(promise) {
-            setTimeout(function(){
-                console.log('执行步骤三');
-                promise.resolve();
-            }, 1000)
-        }
-        function step4(promise) {
-            setTimeout(function(){
-                console.log('执行步骤四');
-            }, 1000)
+        function handleError(error) {
+            /* handle the error */
         }
 
-        step1().then(step2).then(step3).then(step4);
+        function concatResults() {
+            /* order tweets by date */
+        }
+
+        function loadTweets() {
+            var container = document.getElementById('container');
+
+            searchTwitter('#IE10', function (data1) {
+                searchTwitter('#IE9', function (data2) {
+                    /* Reshuffle due to date */
+                    var totalResults = concatResults(data1.results, data2.results);
+                    totalResults.forEach(function (tweet) {
+                        var el = document.createElement('li');
+                        el.innerText = tweet.text;
+                        container.appendChild(el);
+                    });
+                }, handleError);
+            }, handleError);
+        }
+
+        var Promise = function() {
+
+        };
+        Promise.prototype.then = function (onResolved, onRejected) {
+            /* invoke handlers based upon state transition */
+        };
+        Promise.prototype.resolve = function (value) {
+            /* move from unfulfilled to resolved */
+        };
+        Promise.prototype.reject = function (error) {
+            /* move from unfulfilled to rejected */
+        };
     </script>
 
 </head>

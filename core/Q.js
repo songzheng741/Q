@@ -2,6 +2,10 @@ define([], function() {
     var Q = {};
     var DOC = self.document;
 
+    /**
+     *
+     * @param callback
+     */
     Q.domReady = function(callback) {
         /**
          * 兼容老版本FF
@@ -39,10 +43,10 @@ define([], function() {
                         ieReady.call(window, fn)
                     })
                 } else if (self !== top && self.document.readyState === 'complete') {
-                    callback();
+                    setTimeout(callback());
                 } else {
                     document.documentElement.doScroll('left');
-                    callback();
+                    setTimeout(callback());
                 }
             } catch (e) {
                 setTimeout(function(){
@@ -50,6 +54,10 @@ define([], function() {
                 })
             }
         };
+    }
+
+    Q.query = function(selector, context) {
+
     }
     return Q;
 });

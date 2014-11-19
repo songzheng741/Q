@@ -4,7 +4,8 @@ require.config({
         'Q': 'Q',
         'ajax': 'ajax',
         'utils': 'utils',
-        'support': 'support'
+        'support': 'support',
+        'dom': 'dom'
     }
 
 });
