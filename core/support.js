@@ -14,7 +14,8 @@ define(['Q'], function(Q){
              */
             leadingWhitespac: (div.firstChild.nodeType === 3),
             /**
-             * 是否可以正确序列化link、script、style
+             * 是否可以正确序列化link、script、style和html5标签
+             * @member {boolean} htmlSerialize
              */
             htmlSerialize: !!div.getElementsByTagName( "link" ).length
         }

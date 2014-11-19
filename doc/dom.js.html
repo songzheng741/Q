@@ -1,4 +1,32 @@
-define(['Q','utils','support'], function(Q, utils, support){
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>JSDoc: Source: dom.js</title>
+
+    <script src="scripts/prettify/prettify.js"> </script>
+    <script src="scripts/prettify/lang-css.js"> </script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify-tomorrow.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc-default.css">
+</head>
+
+<body>
+
+<div id="main">
+
+    <h1 class="page-title">Source: dom.js</h1>
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>define(['Q','utils','support'], function(Q, utils, support){
     "use strict";
 
     /**
@@ -75,7 +103,7 @@ define(['Q','utils','support'], function(Q, utils, support){
 
     var html5NodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer" +
            "header|hgroup|mark|meter|nav|output|progress|section|summary|time|video";
-    var rhtml = /<|&#?\w+;/;
+    var rhtml = /&lt;|&amp;#?\w+;/;
 
     /**
      * @method createSafeFragment
@@ -86,9 +114,9 @@ define(['Q','utils','support'], function(Q, utils, support){
         var list = html5NodeNames.split('|'),
             safeFrag = document.createDocumentFragment();
         /**
-         * IE <= 8 DocumentFragment才有createElement方法
+         * IE &lt;= 8 DocumentFragment才有createElement方法
          */
-        if (safeFrag.createElement) {//通过创建Html标签,教会IE<8的游览器学会渲染html5元素
+        if (safeFrag.createElement) {//通过创建Html标签,教会IE&lt;8的游览器学会渲染html5元素
             while ( list.length ) {
                 safeFrag.createElement(list.pop());
             }
@@ -97,26 +125,26 @@ define(['Q','utils','support'], function(Q, utils, support){
     }
 
     var wrapMap = {
-        option: [1, "<select multiple='multiple'>", "</select>"],
-        legend: [1, "<fieldset>", "</fieldset>"],
-        area: [1, "<map>", "</map>"],
-        param: [1, "<object>","</object>"],
-        thead: [1, "<table>","</table>"],
-        tr: [2, "<table><tbody>", "</tbody></table>"],
-        col: [ 2, "<table><tbody></tbody><colgroup>", "</colgroup></table>" ],
-        td: [ 3, "<table><tbody><tr>", "</tr></tbody></table>" ],
+        option: [1, "&lt;select multiple='multiple'>", "&lt;/select>"],
+        legend: [1, "&lt;fieldset>", "&lt;/fieldset>"],
+        area: [1, "&lt;map>", "&lt;/map>"],
+        param: [1, "&lt;object>","&lt;/object>"],
+        thead: [1, "&lt;table>","&lt;/table>"],
+        tr: [2, "&lt;table>&lt;tbody>", "&lt;/tbody>&lt;/table>"],
+        col: [ 2, "&lt;table>&lt;tbody>&lt;/tbody>&lt;colgroup>", "&lt;/colgroup>&lt;/table>" ],
+        td: [ 3, "&lt;table>&lt;tbody>&lt;tr>", "&lt;/tr>&lt;/tbody>&lt;/table>" ],
         /**
-         * 包裹一个字符紧挨着的div(X<div>{script|style|link|htmlTags})可以让IE6-8可以正确序列化script、style、link或者任何html5标签
+         * 包裹一个字符紧挨着的div(X&lt;div>{script|style|link|htmlTags})可以让IE6-8可以正确序列化script、style、link或者任何html5标签
          */
-        _default: support.htmlSerialize ? [0, "", ""] : [1, "X<div>", "</div>"]
+        _default: support.htmlSerialize ? [0, "", ""] : [1, "X&lt;div>", "&lt;/div>"]
     }
     wrapMap["optgroup"] = wrapMap.option;
     wrapMap["tbody"] = wrapMap["tfoot"] = wrapMap["colgroup"] = wrapMap["caption"] = wrapMap.thead;
     wrapMap["th"] = wrapMap.td;
 
-    var rtagName = /<([\w:]+)>/,
+    var rtagName = /&lt;([\w:]+)>/,
         rleadingWhitespace = /^\s+/,
-        rselfClosedTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi;
+        rselfClosedTag = /&lt;(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi;
     /**
      * 将html字符串转换为DOM节点
      * @method html2DOM
@@ -138,14 +166,14 @@ define(['Q','utils','support'], function(Q, utils, support){
                     wrapper = wrapMap[tagName] || wrapMap._default;
 
                 var div = fragment.appendChild(document.createElement('div'));
-                div.innerHTML = wrapper[1] + htmlStr.replace(rselfClosedTag, "<$1></$2>") + wrapper[2];
+                div.innerHTML = wrapper[1] + htmlStr.replace(rselfClosedTag, "&lt;$1>&lt;/$2>") + wrapper[2];
                 var ele = div.firstChild;
 
                 var wrapperDeeps = wrapper[0];
                 while(wrapperDeeps--) {
                     ele = ele.lastChild;
                 }
-                if (!support.leadingWhitespac && rleadingWhitespace.test(htmlStr)) {
+                if (!support.leadingWhitespac &amp;&amp; rleadingWhitespace.test(htmlStr)) {
                     eles.push(DOC.createTextNode(rleadingWhitespace.exec(htmlStr)[0]));
                 }
 
@@ -157,3 +185,26 @@ define(['Q','utils','support'], function(Q, utils, support){
 
     return dom;
 });
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+</div>
+
+<nav>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-ajax.html">ajax</a></li><li><a href="module-dom.html">dom</a></li><li><a href="module-support.html">support</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isRegExp">isRegExp</a></li></ul>
+</nav>
+
+<br clear="both">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha10</a> on Wed Nov 19 2014 19:40:04 GMT+0800 (中国标准时间)
+</footer>
+
+<script> prettyPrint(); </script>
+<script src="scripts/linenumber.js"> </script>
+</body>
+</html>
