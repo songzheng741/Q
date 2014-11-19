@@ -12,13 +12,13 @@ define(['Q'], function(Q){
      * @param {Object} context 执行回调函数的上下文
      */
     utils.each = function(obj, callback, context) {
-        if (obj) {
+        if (!obj) {
             return;
         }
         if (!context) {
             context = self;
         }
-        if (obj.length === +obj.length) {// obj.length === +obj.length 判断length是否为数字
+        if (obj.length == +obj.length) {// obj.length === +obj.length 判断length是否为数字
             for (var i = 0, len = obj.length; i < len; i++) {
                 if (callback.call(context, obj[i], i, obj) === false) {
                     return false;
@@ -37,8 +37,8 @@ define(['Q'], function(Q){
 
     utils.each(['String', 'Function', 'Array', 'Number', 'RegExp', 'Object', 'Date'], function(type){
        utils['is'+type] = function(obj) {
-           return obj.prototype.toString.apply(obj) === '[object ' + type + ']';
+           return Object.prototype.toString.apply(obj) === '[object ' + type + ']';
        }
     });
-    return Q;
+    return utils;
 });

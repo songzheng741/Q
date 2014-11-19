@@ -37,5 +37,5 @@ define(['Q', 'utils'], function(Q, utils){
 
    }
 
-   return Q;
+   return ajax;
 })

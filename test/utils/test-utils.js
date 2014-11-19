@@ -9,12 +9,8 @@ require.config({
     }
 });
 
-require(['dom'], function(domUtils){
-    /* testHtml2DOM start*/
-    var htmlStr = [ '<div><span></span></div>'
-                  ].join('');
-    var option = domUtils.html2DOM(htmlStr);
-    /* testHtml2DOM end*/
+require(['utils'], function(utils){
+    console.log(utils.isString('abc'));
 });
 
 function testHtml2DOM() {

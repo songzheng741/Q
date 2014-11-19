@@ -110,11 +110,12 @@ define(['Q','utils','support'], function(Q, utils, support){
          */
         _default: support.htmlSerialize ? [0, "", ""] : [1, "X<div>", "</div>"]
     }
-    wrapMap["optgroup"] = wrapMap.option;;
+    wrapMap["optgroup"] = wrapMap.option;
     wrapMap["tbody"] = wrapMap["tfoot"] = wrapMap["colgroup"] = wrapMap["caption"] = wrapMap.thead;
     wrapMap["th"] = wrapMap.td;
 
-    var rtagName = /<([\w:]+)>/;
+    var rtagName = /<([\w:]+)>/,
+        rselfClosedTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi;
     /**
      * 将html字符串转换为DOM节点
      * @method html2DOM
@@ -122,6 +123,7 @@ define(['Q','utils','support'], function(Q, utils, support){
      * @returns {Node}
      */
     dom.html2DOM = function(htmlStr) {
+        var eles = [];
         var DOC = self.document;
         if (typeof htmlStr !== 'string') {
             return null;
@@ -136,10 +138,20 @@ define(['Q','utils','support'], function(Q, utils, support){
          * (5)修复IE的bug
          */
         } else {
-            var fragment = createSafeFragment();
-            var tagName = (rtagName.exec(htmlStr) || ['', ''])[1],
+            var fragment = createSafeFragment(),
+                tagName = (rtagName.exec(htmlStr) || ['', ''])[1],
                 wrapper = wrapMap[tagName] || wrapMap._default;
 
+            var div = fragment.appendChild(document.createElement('div'));
+            div.innerHTML = wrapper[1] + htmlStr.replace(rselfClosedTag, "<$1></$2>") + wrapper[2];
+            var ele = div.firstChild;
+
+            var wrapperDeeps = wrapper[0];
+            while(wrapperDeeps--) {
+                ele = ele.lastChild;
+            }
+
+            return ele;
         }
     }
 

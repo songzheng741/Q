@@ -1,5 +1,5 @@
 define(['Q'], function(Q){
-    Q.support = (function(){
+    var support = Q.support = (function(){
         var div = document.createElement('div');
         div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
 
@@ -21,5 +21,5 @@ define(['Q'], function(Q){
         return support;
     })();
 
-    return Q;
+    return support;
 })
