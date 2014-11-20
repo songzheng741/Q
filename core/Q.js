@@ -56,8 +56,5 @@ define([], function() {
         };
     }
 
-    Q.query = function(selector, context) {
-
-    }
     return Q;
 });

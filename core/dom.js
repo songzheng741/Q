@@ -3,14 +3,29 @@ define(['Q','utils','support'], function(Q, utils, support){
 
     /**
      * dom工具模块
-     * @module dom
+     * @module domUtils
      * @requires Q
      * @requires utils
      */
-    var dom = Q.dom = {};
+    var domUtils = Q.domUtils = {};
 
-    dom.getDocument = function(ele) {
+    /**
+     * 得到元素所属文档
+     * @param ele
+     * @returns {HTMLDocument}
+     */
+    domUtils.getDocument = function(ele) {
         return ele.ownerDocument || ele;
+    }
+
+    /**
+     * 测试元素是否为指定节点名的元素
+     * @param ele
+     * @param nodeName
+     * @returns {boolean}
+     */
+    var isNodeType = domUtils.isNodeType = function(ele, nodeName) {
+        return ele.nodeName && ele.nodeName.toLowerCase() === nodeName.toLowerCase();
     }
 
     /**
@@ -20,7 +35,7 @@ define(['Q','utils','support'], function(Q, utils, support){
      * @param node2
      * @returns {number}
      */
-    dom.position = function(node1, node2){
+    domUtils.position = function(node1, node2){
         // 如果两个节点是同一个节点
         if (node1 === node2) {
             return 0;
@@ -82,7 +97,7 @@ define(['Q','utils','support'], function(Q, utils, support){
      * 创建一个可以正确渲染html标签的DocumentFragment
      * @return {DocumentFragment}
      */
-    var createSafeFragment = dom.createSafeFragment = function() {
+    var createSafeFragment = domUtils.createSafeFragment = function() {
         var list = html5NodeNames.split('|'),
             safeFrag = document.createDocumentFragment();
         /**
@@ -116,16 +131,19 @@ define(['Q','utils','support'], function(Q, utils, support){
 
     var rtagName = /<([\w:]+)>/,
         rleadingWhitespace = /^\s+/,
+        rtbody = /<tbody/i,
         rselfClosedTag = /<(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi;
+
     /**
      * 将html字符串转换为DOM节点
      * @method html2DOM
      * @param {string} htmlStr html字符串
-     * @returns {Array}
+     * @returns {DocumentFragment}
      */
-    dom.html2DOM = function(htmlStrs) {
+    domUtils.html2DOM = function(htmlStrs) {
         var eles = [];
         var DOC = self.document;
+        var fragment = createSafeFragment();
         if (utils.isString(htmlStrs)) {
             htmlStrs = [htmlStrs];
         }
@@ -133,27 +151,52 @@ define(['Q','utils','support'], function(Q, utils, support){
             if (!rhtml.test(htmlStr)) { //没有标签或特征直接生成textNode
                 eles.push(DOC.createTextNode(htmlStr));
             } else {
-                var fragment = createSafeFragment(),
-                    tagName = (rtagName.exec(htmlStr) || ['', ''])[1],
-                    wrapper = wrapMap[tagName] || wrapMap._default;
+                var tagName = (rtagName.exec(htmlStr) || ['', ''])[1],
+                    wrapper = wrapMap[tagName] || wrapMap._default;//包裹必要父类,否则innerHTML会忽略一些元素
 
-                var div = fragment.appendChild(document.createElement('div'));
+                var div = DOC.createElement('div');
                 div.innerHTML = wrapper[1] + htmlStr.replace(rselfClosedTag, "<$1></$2>") + wrapper[2];
-                var ele = div.firstChild;
+                var ele = div.lastChild;
 
                 var wrapperDeeps = wrapper[0];
                 while(wrapperDeeps--) {
                     ele = ele.lastChild;
                 }
+                //添加IE innerHTML会去掉前导空白的bug
                 if (!support.leadingWhitespac && rleadingWhitespace.test(htmlStr)) {
                     eles.push(DOC.createTextNode(rleadingWhitespace.exec(htmlStr)[0]));
                 }
-
+                //去掉IE<=7 为空table添加的tbody
+                if (support.autoAddtbody && !rtbody.test(htmlStr) && isNodeType(ele, 'table')) {
+                    var child = ele.firstChild;
+                    while (child) {
+                        if (isNodeType(child, 'tbody') && child.childNodes.length === 0) {
+                            ele.removeChild(child);
+                            break;
+                        }
+                        child = ele.nextSibling;
+                    }
+                }
                 eles.push(ele);
+
+                for (var i = 0, len = eles.length; i < len; i++) {
+                    fragment.appendChild(eles[i]);
+                }
             }
         });
-        return eles;
+        return fragment;
     }
 
-    return dom;
+    domUtils.index = function(ele, ignoreTextNode) {
+        var index = 0;
+        while (ele = ele.previousSibling && ) {
+            if (ignoreTextNode) {
+                continue;
+            }
+            index++
+        }
+        return index;
+    }
+
+    return domUtils;
 });

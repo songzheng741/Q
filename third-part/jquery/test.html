@@ -4,37 +4,12 @@
     <meta charset="UTF-8">
     <title></title>
     <script src="jquery-1.11.1.js"></script>
-    <script>
-        var step1 = function() {
-            console.log("------step1------");
-            var d = $.Deferred();
-            d.resolve('Some data');
-            return d.promise();
-        };
-
-        var step2 = function (result) {
-            console.log("------step2------");
-            console.log("step2 recevied: " + result);
-            var d = $.Deferred();
-            d.resolve("step2 resolve: " + result);
-            return d.promise();
-        }
-
-        var step3 = function (result) {
-            console.log("------step3------");
-            console.log("step3 recevied: " + result);
-            var d = $.Deferred();
-            d.reject(new Error("This is failing!!!"));
-            return d.promise();
-        }
-
-        var promise = step1();
-
-        var promise1 = promise.then(step2);
-        var promise2 = promise.then(step3);
-    </script>
 </head>
 <body>
 
 </body>
+<script>
+    var a = Boolean('null');
+    alert(a);
+</script>
 </html>

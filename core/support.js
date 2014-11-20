@@ -1,5 +1,6 @@
 define(['Q'], function(Q){
     var support = Q.support = (function(){
+
         var div = document.createElement('div');
         div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
 
@@ -17,7 +18,12 @@ define(['Q'], function(Q){
              * 是否可以正确序列化link、script、style和html5标签
              * @member {boolean} htmlSerialize
              */
-            htmlSerialize: !!div.getElementsByTagName( "link" ).length
+            htmlSerialize: !!div.getElementsByTagName( "link" ).length,
+            /**
+             * IE<=7会为空table添加tbody
+             * @member {boolean} autoAddtbodys
+             */
+            autoAddtbody: div.getElementsByTagName( "tbody" ).length
         }
         return support;
     })();
