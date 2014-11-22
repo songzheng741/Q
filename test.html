@@ -5,13 +5,11 @@
     <title></title>
 </head>
 <body>
-<div id="a">a<div id="c">c</div></div>
-<div id="b">b</div>
+<embed a="11"></embed>
 </body>
 <script>
-    var divs = document.querySelectorAll('div:last-of-type');
-    for (var i = 0; i < divs.length; i++) {
-        divs[i].style.backgroundColor = 'red';
-    }
-</script>
+    var a = '111121111';
+    var reg = /^(\d+)2\2$/;
+    console.log(reg.test(a))
+;</script>
 </html>

@@ -50,30 +50,35 @@ define(['Q'], function(Q){
      * @param  {*} obj
      * @return {boolean}
      */
+    utils.isFunction = function(obj){};
     /**
      * 判断参数是否为数组
      * @method isArray
      * @param  {*} obj
      * @return {boolean}
      */
+    utils.isArray = function(obj){};
     /**
      * 判断参数是否为数字
      * @method isNumber
      * @param  {*} obj
      * @return {boolean}
      */
+    utils.isArray = function(obj){};
     /**
      * 判断参数是否为正则
      * @method isRegExp
      * @param  {*} obj
      * @return {boolean}
      */
+    utils.isRegExp = function(obj){};
     /**
      * 判断参数是否为对象
      * @method isObject
      * @param  {*} obj
      * @return {boolean}
      */
+    utils.isObject = function(obj){};
     /**
      * 判断参数是否为日期
      * @method isDate
@@ -85,5 +90,16 @@ define(['Q'], function(Q){
            return Object.prototype.toString.apply(obj) === '[object ' + type + ']';
        }
     });
+    /**
+     * 判断是否为Window对象
+     * @method isWindow
+     * @param  {*} obj
+     * @return {boolean}
+     */
+    utils.isWindow = function(obj) {
+        return obj != null && obj == obj.window;
+    }
+
+
     return utils;
 });

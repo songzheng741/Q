@@ -11,6 +11,7 @@ define(['Q','utils','support'], function(Q, utils, support){
 
     /**
      * 得到元素所属文档
+     * @method getDocument
      * @param ele
      * @returns {HTMLDocument}
      */
@@ -75,6 +76,7 @@ define(['Q','utils','support'], function(Q, utils, support){
          */
         while (i++, parents1[i] === parents2[i]) {
         }
+
         node1 = parents1[i];
         node2 = parents2[i];
         /**
@@ -93,8 +95,8 @@ define(['Q','utils','support'], function(Q, utils, support){
     var rhtml = /<|&#?\w+;/;
 
     /**
-     * @method createSafeFragment
      * 创建一个可以正确渲染html标签的DocumentFragment
+     * @method createSafeFragment
      * @return {DocumentFragment}
      */
     var createSafeFragment = domUtils.createSafeFragment = function() {
@@ -187,15 +189,55 @@ define(['Q','utils','support'], function(Q, utils, support){
         return fragment;
     }
 
+    /**
+     * 获得元素在兄弟节点中的位置
+     * @method index
+     * @param ele
+     * @param ignoreTextNode 忽略文本节点
+     * @returns {number}
+     */
     domUtils.index = function(ele, ignoreTextNode) {
         var index = 0;
-        while (ele = ele.previousSibling && ) {
-            if (ignoreTextNode) {
+        while (ele = ele.previousSibling && (ele.nodeType === 3 || ele.nodeType === 1)) {
+            if (ignoreTextNode && ele.nodeType === 1) {
                 continue;
             }
             index++
         }
         return index;
+    }
+
+    var hasClass = domUtils.hasClass = function(ele, cls) {
+        if (support.classList) {
+            return ele.classList.contains(cls);
+        }
+        return (' ' + ele.className + ' ').indexOf(cls) !== -1;
+    }
+
+    domUtils.addClass = function(ele, cls) {
+        if (support.classList) {
+            ele.classList.add(cls);
+            return;
+        }
+        if (!(hasClass(ele, cls))) {
+            ele.className = ele.className + ' ' + cls;
+        }
+    }
+
+    domUtils.removeClass = function(ele, cls) {
+        if (support.classList) {
+            ele.classList.remove(cls);
+        }
+        var setClass = ele.className;
+        var reg = /\S+/g;
+        var newClass = [];
+        setClass.replace(reg, function(oldCls) {
+            if (cls !== oldCls) {
+                newClass.push(oldCls);
+            }
+            return '';
+        });
+        ele.className = newClass.join(' ');
     }
 
     return domUtils;

@@ -1,10 +1,15 @@
 define([], function() {
+    /**
+     * 所有功能挂载此对象之下
+     * @module Q
+     */
     var Q = {};
     var DOC = self.document;
 
     /**
-     *
-     * @param callback
+     * dom加载完毕后执行回调函数
+     * @method domReady
+     * @param callback 回调函数
      */
     Q.domReady = function(callback) {
         /**
@@ -37,7 +42,7 @@ define([], function() {
 
         function ieReady(callback) {
             try {
-                //处理在iframe中引入的页面无法通过doScroll判断DOM知否加载完毕
+                //处理在iframe中引入的页面无法通过doScroll判断DOM是否加载完毕
                 if (self !== top && self.document.readyState !== 'complete') {
                     setTimeout(function(){
                         ieReady.call(window, fn)
@@ -54,7 +59,14 @@ define([], function() {
                 })
             }
         };
-    }
+    };
+
+    Q.console = function(msg) {
+        if (window.console) {
+            console.warn(msg);
+        }
+        return;
+    };
 
     return Q;
 });

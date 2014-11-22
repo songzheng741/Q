@@ -6,10 +6,12 @@
     <script src="jquery-1.11.1.js"></script>
 </head>
 <body>
-
+    <div id="div"></div>
 </body>
 <script>
-    var a = Boolean('null');
-    alert(a);
+    var $a = $({});
+    $a.data({'a': '111', 'b': 222})
+    var cache = $a.data();
+    console.log(cache);
 </script>
 </html>

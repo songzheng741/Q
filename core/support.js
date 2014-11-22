@@ -9,6 +9,7 @@ define(['Q'], function(Q){
          * @module support
          */
         var support = {
+            /* 怪癖检查 */
             /**
              * 是否会保留前导空白
              * @member {boolean} leadingWhitespac
@@ -23,7 +24,16 @@ define(['Q'], function(Q){
              * IE<=7会为空table添加tbody
              * @member {boolean} autoAddtbodys
              */
-            autoAddtbody: div.getElementsByTagName( "tbody" ).length
+            autoAddtbody: !!div.getElementsByTagName( "tbody" ).length,
+            /* 怪癖检查 */
+
+            /* 功能检查 */
+            /**
+             * IE>=10 or 其他现代游览器
+             * @member {boolean} classList
+             */
+            classList: !!div.classList
+            /* 功能检查 */
         }
         return support;
     })();

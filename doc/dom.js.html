@@ -31,14 +31,30 @@
 
     /**
      * dom工具模块
-     * @module dom
+     * @module domUtils
      * @requires Q
      * @requires utils
      */
-    var dom = Q.dom = {};
+    var domUtils = Q.domUtils = {};
 
-    dom.getDocument = function(ele) {
+    /**
+     * 得到元素所属文档
+     * @method getDocument
+     * @param ele
+     * @returns {HTMLDocument}
+     */
+    domUtils.getDocument = function(ele) {
         return ele.ownerDocument || ele;
+    }
+
+    /**
+     * 测试元素是否为指定节点名的元素
+     * @param ele
+     * @param nodeName
+     * @returns {boolean}
+     */
+    var isNodeType = domUtils.isNodeType = function(ele, nodeName) {
+        return ele.nodeName &amp;&amp; ele.nodeName.toLowerCase() === nodeName.toLowerCase();
     }
 
     /**
@@ -48,7 +64,7 @@
      * @param node2
      * @returns {number}
      */
-    dom.position = function(node1, node2){
+    domUtils.position = function(node1, node2){
         // 如果两个节点是同一个节点
         if (node1 === node2) {
             return 0;
@@ -106,11 +122,11 @@
     var rhtml = /&lt;|&amp;#?\w+;/;
 
     /**
-     * @method createSafeFragment
      * 创建一个可以正确渲染html标签的DocumentFragment
+     * @method createSafeFragment
      * @return {DocumentFragment}
      */
-    var createSafeFragment = dom.createSafeFragment = function() {
+    var createSafeFragment = domUtils.createSafeFragment = function() {
         var list = html5NodeNames.split('|'),
             safeFrag = document.createDocumentFragment();
         /**
@@ -144,16 +160,19 @@
 
     var rtagName = /&lt;([\w:]+)>/,
         rleadingWhitespace = /^\s+/,
+        rtbody = /&lt;tbody/i,
         rselfClosedTag = /&lt;(?!area|br|col|embed|hr|img|input|link|meta|param)(([\w:]+)[^>]*)\/>/gi;
+
     /**
      * 将html字符串转换为DOM节点
      * @method html2DOM
      * @param {string} htmlStr html字符串
-     * @returns {Array}
+     * @returns {DocumentFragment}
      */
-    dom.html2DOM = function(htmlStrs) {
+    domUtils.html2DOM = function(htmlStrs) {
         var eles = [];
         var DOC = self.document;
+        var fragment = createSafeFragment();
         if (utils.isString(htmlStrs)) {
             htmlStrs = [htmlStrs];
         }
@@ -161,29 +180,61 @@
             if (!rhtml.test(htmlStr)) { //没有标签或特征直接生成textNode
                 eles.push(DOC.createTextNode(htmlStr));
             } else {
-                var fragment = createSafeFragment(),
-                    tagName = (rtagName.exec(htmlStr) || ['', ''])[1],
-                    wrapper = wrapMap[tagName] || wrapMap._default;
+                var tagName = (rtagName.exec(htmlStr) || ['', ''])[1],
+                    wrapper = wrapMap[tagName] || wrapMap._default;//包裹必要父类,否则innerHTML会忽略一些元素
 
-                var div = fragment.appendChild(document.createElement('div'));
+                var div = DOC.createElement('div');
                 div.innerHTML = wrapper[1] + htmlStr.replace(rselfClosedTag, "&lt;$1>&lt;/$2>") + wrapper[2];
-                var ele = div.firstChild;
+                var ele = div.lastChild;
 
                 var wrapperDeeps = wrapper[0];
                 while(wrapperDeeps--) {
                     ele = ele.lastChild;
                 }
+                //添加IE innerHTML会去掉前导空白的bug
                 if (!support.leadingWhitespac &amp;&amp; rleadingWhitespace.test(htmlStr)) {
                     eles.push(DOC.createTextNode(rleadingWhitespace.exec(htmlStr)[0]));
                 }
-
+                //去掉IE&lt;=7 为空table添加的tbody
+                if (support.autoAddtbody &amp;&amp; !rtbody.test(htmlStr) &amp;&amp; isNodeType(ele, 'table')) {
+                    var child = ele.firstChild;
+                    while (child) {
+                        if (isNodeType(child, 'tbody') &amp;&amp; child.childNodes.length === 0) {
+                            ele.removeChild(child);
+                            break;
+                        }
+                        child = ele.nextSibling;
+                    }
+                }
                 eles.push(ele);
+
+                for (var i = 0, len = eles.length; i &lt; len; i++) {
+                    fragment.appendChild(eles[i]);
+                }
             }
         });
-        return eles;
+        return fragment;
     }
 
-    return dom;
+    /**
+     * 获得元素在兄弟节点中的位置
+     * @method index
+     * @param ele
+     * @param ignoreTextNode 忽略文本节点
+     * @returns {number}
+     */
+    domUtils.index = function(ele, ignoreTextNode) {
+        var index = 0;
+        while (ele = ele.previousSibling &amp;&amp; (ele.nodeType === 3 || ele.nodeType === 1)) {
+            if (ignoreTextNode &amp;&amp; ele.nodeType === 1) {
+                continue;
+            }
+            index++
+        }
+        return index;
+    }
+
+    return domUtils;
 });
 </code></pre>
         </article>
@@ -195,13 +246,13 @@
 </div>
 
 <nav>
-    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-ajax.html">ajax</a></li><li><a href="module-dom.html">dom</a></li><li><a href="module-support.html">support</a></li><li><a href="module-utils.html">utils</a></li></ul><h3>Global</h3><ul><li><a href="global.html#isArray">isArray</a></li><li><a href="global.html#isFunction">isFunction</a></li><li><a href="global.html#isNumber">isNumber</a></li><li><a href="global.html#isObject">isObject</a></li><li><a href="global.html#isRegExp">isRegExp</a></li></ul>
+    <h2><a href="index.html">Index</a></h2><h3>Modules</h3><ul><li><a href="module-ajax.html">ajax</a></li><li><a href="module-domUtils.html">domUtils</a></li><li><a href="module-support.html">support</a></li><li><a href="module-utils.html">utils</a></li><li><a href="Q%250D%25E6%2589%2580%25E6%259C%2589%25E5%258A%259F%25E8%2583%25BD%25E6%258C%2582%25E8%25BD%25BD%25E6%25AD%25A4%25E5%25AF%25B9%25E8%25B1%25A1%25E4%25B9%258B%25E4%25B8%258Bmodule_.html">Q所有功能挂载此对象之下</a></li></ul>
 </nav>
 
 <br clear="both">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha10</a> on Wed Nov 19 2014 19:40:04 GMT+0800 (中国标准时间)
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.3.0-alpha10</a> on Fri Nov 21 2014 10:00:26 GMT+0800 (中国标准时间)
 </footer>
 
 <script> prettyPrint(); </script>
