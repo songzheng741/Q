@@ -1,5 +1,16 @@
-define(['Q'], function(Q){
-    var query = Q.query = function(selector) {
+define(['Q'], function(Q) {
 
+    var rLeftWhite = /^\s+/;
+    var rRightWhite = /\s+$/;
+    var rSimpleSelector = //;
+
+    Q.query = function(selector, context) {
+        if (!context) {
+            context = document;
+        }
+        if (context && context.querySelectorAll) {
+            return context.querySelectorAll(selector);
+        }
     }
+
 });

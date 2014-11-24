@@ -65,7 +65,6 @@ define([], function() {
         if (window.console) {
             console.warn(msg);
         }
-        return;
     };
 
     return Q;

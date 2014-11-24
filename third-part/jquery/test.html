@@ -6,12 +6,9 @@
     <script src="jquery-1.11.1.js"></script>
 </head>
 <body>
-    <div id="div"></div>
+    <div id="div"><div id="a"></div><div id="b"></div><div id="c"></div><div id="d"></div></div>
 </body>
 <script>
-    var $a = $({});
-    $a.data({'a': '111', 'b': 222})
-    var cache = $a.data();
-    console.log(cache);
+    console.log($('#a+div').length);
 </script>
 </html>
