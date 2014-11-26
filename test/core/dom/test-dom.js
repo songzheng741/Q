@@ -1,5 +1,5 @@
 require.config({
-    baseUrl: '../../core',
+    baseUrl: '../../../core',
     path: {
         'Q': 'Q',
         'ajax': 'ajax',
@@ -9,7 +9,7 @@ require.config({
     }
 });
 
-require(['dom'], function(domUtils){
+require(['Q', 'dom'], function(Q, domUtils){
 
     /* test html2DOM method start*/
     var htmlStr = '   <table><tr><td><select><option value="22">111</option><option value="22">111</option></select></td></tr></table>';
@@ -44,6 +44,13 @@ require(['dom'], function(domUtils){
     hasClass = domUtils.removeClass(div, 'a');
     console.log(div.className );
     /* test removeClass method end */
+
+    var div = document.getElementById('div');
+    var arr = [];
+    for (var i = 0; i < 50; i++) {
+        arr.push(div);
+    }
+    Q.console(domUtils.unique(arr).length);
 
 });
 
