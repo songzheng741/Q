@@ -3,6 +3,8 @@ define(['Q'], function(Q){
 
         var div = document.createElement('div');
         div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
+        var div1 = document.createElement('div');
+        div1.appendChild(div.createComment(''));
 
         /**
          * 一些怪癖检查模块
@@ -32,7 +34,13 @@ define(['Q'], function(Q){
              * IE>=10 or 其他现代游览器
              * @member {boolean} classList
              */
-            classList: !!div.classList
+            classList: !!div.classList,
+            /**
+             * getElementsByTagName时
+             * 会把comment也放进结果集里
+             * @member {boolean} getCommentNodes
+             */
+            getCommentNodes: !!div1.getElementsByTagName('*')
             /* 功能检查 */
         }
         return support;

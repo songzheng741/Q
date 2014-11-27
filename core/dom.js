@@ -137,7 +137,11 @@ define(['Q','utils','support'], function(Q, utils, support){
         mustDuplicate = false;
         return 0;
     });
-
+    /**
+     * 对元素集合进行去重
+     * @param elements 元素集合
+     * @returns {*} 返回的节点集合是去重过并且按照文档出现顺序的
+     */
     domUtils.unique = function(elements) {
         var ele,
             i = 0;
@@ -151,6 +155,29 @@ define(['Q','utils','support'], function(Q, utils, support){
             }
         }
         return elements;
+    }
+    /**
+     * 修正的getElementsByTagName方法
+     * @type {NodeList}
+     */
+    domUtils.getElementsByTagName = function(context, tag) {
+        if (!tag) {
+            tag = context;
+            context = DOC;
+        }
+        var filterNodes = context.getElementsByTagName(tag);
+        if (context.getElementsByTagName('*').length) {
+            if ((tag === '*' && support.getCommentNodes) || typeof filterNodes.length != 'number') {
+                var ele,
+                    i = 0;
+                while (ele = filterNodes[i++]) {
+                    if (ele.nodeType != 1) {
+                        filterNodes.splice(--i, i);
+                    }
+                }
+            }
+        }
+        return filterNodes;
     }
 
     var html5NodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer" +
