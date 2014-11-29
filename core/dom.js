@@ -1,6 +1,7 @@
 define(['Q','utils','support'], function(Q, utils, support){
     "use strict";
 
+    var DOC = document;
     /**
      * dom工具模块
      * @module domUtils
@@ -88,6 +89,95 @@ define(['Q','utils','support'], function(Q, utils, support){
             }
         }
         return  2;
+    }
+
+    /**
+     * 比较两个节点位置如果
+     * @method compareNodeOrder
+     * @param {Element} node1
+     * @param {Element} node2
+     * @return {number} position node1在node2之前返回-1,node2在node1之前返回1
+     */
+    var compareNodeOrder = domUtils.compareNodeOrder = (function() {
+        if ('sourceIndex' in (DOC && DOC.documentElement || {})) {
+            return function(node1,node2) {
+                return node1.sourceIndex - node2.sourceIndex;
+            }
+        } else {
+            return function(node1, node2) {
+                if (!node1.compareDocumentPosition || !node2.compareDocumentPosition) {
+                    if (node1.compareDocumentPosition) {
+                        return -1;
+                    }
+                }
+                return node1.compareDocumentPosition(node2) & 4 ? -1 : 1;
+            }
+        }
+    })();
+
+
+    var hasDuplicate = false,
+        mustDuplicate = true;
+
+    var sortOrder = function(a, b) {
+        if (a === b) {
+            hasDuplicate = true;
+            return 0;
+        }
+        return compareNodeOrder(a, b);
+    }
+    /*
+     * 早期chrome会对sort函数进行优化
+     * 如果两个元素相同就不会调用sort函数
+     * 所以我们就不能通过sort函数来判断是否有重复元素
+     * 只能进行遍历了
+     */
+    var testArr = [1, 1];
+    testArr.sort(function(){
+        mustDuplicate = false;
+        return 0;
+    });
+    /**
+     * 对元素集合进行去重
+     * @param elements 元素集合
+     * @returns {*} 返回的节点集合是去重过并且按照文档出现顺序的
+     */
+    domUtils.unique = function(elements) {
+        var ele,
+            i = 0;
+        hasDuplicate = mustDuplicate;
+        elements.sort(sortOrder);
+        if (hasDuplicate) {
+            while(ele = elements[i++]) {
+                if (ele === elements[i]) {
+                    elements.splice(i--, 1);
+                }
+            }
+        }
+        return elements;
+    }
+    /**
+     * 修正的getElementsByTagName方法
+     * @type {NodeList}
+     */
+    domUtils.getElementsByTagName = function(context, tag) {
+        if (!tag) {
+            tag = context;
+            context = DOC;
+        }
+        var filterNodes = context.getElementsByTagName(tag);
+        if (context.getElementsByTagName('*').length) {
+            if ((tag === '*' && support.getCommentNodes) || typeof filterNodes.length != 'number') {
+                var ele,
+                    i = 0;
+                while (ele = filterNodes[i++]) {
+                    if (ele.nodeType != 1) {
+                        filterNodes.splice(--i, i);
+                    }
+                }
+            }
+        }
+        return filterNodes;
     }
 
     var html5NodeNames = "abbr|article|aside|audio|bdi|canvas|data|datalist|details|figcaption|figure|footer" +
@@ -197,9 +287,12 @@ define(['Q','utils','support'], function(Q, utils, support){
      * @returns {number}
      */
     domUtils.index = function(ele, ignoreTextNode) {
+        if (!ele) {
+            return -1;
+        }
         var index = 0;
-        while (ele = ele.previousSibling && (ele.nodeType === 3 || ele.nodeType === 1)) {
-            if (ignoreTextNode && ele.nodeType === 1) {
+        while (ele = ele.previousSibling && (ele.nodeType === 1 || ele.nodeType === 3)) {
+            if (ignoreTextNode && ele.nodeType === 3) {
                 continue;
             }
             index++
