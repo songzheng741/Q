@@ -4,11 +4,68 @@
     <meta charset="UTF-8">
     <title></title>
 </head>
-<body>
-<a href="@" id="a">www.11.baidu.com</a>
+<body style="background-color: #11183B;">
+<div><img src="./gif.jpg" /></div>
+<img src="./fireworks.gif" alt=""/>
 </body>
 <script>
+    var html = document.documentElement;
+    var last = now();
+    var t = 0;
 
-    document.getElementById("a").href='http://docs.kissyui.com';
-;</script>
+    var div = document.body.getElementsByTagName('div')[0];
+    div.style.left = '600px'
+    div.style.position = 'absolute';
+
+    div.onclick = function() {
+        alert(2);
+    }
+
+
+
+    var timer1 = setInterval(function(){
+        t += now() - last;
+        div.style.top = Math.ceil(Bounce.easeOut(t, 0, 400, 1000)) + 'px';
+        if (t >= 1000) {
+            div.style.top = '400px'; //end
+            clearInterval(timer1);
+        }
+        last = now();
+    }, 1000 / 36);
+
+
+    function getComputeStyle(elem, style) {
+        if (window.getComputedStyle) {
+            return window.getComputedStyle(elem, null)[style] || 0;
+        } else {
+            return elem.currentStyle[style] || 0;
+        }
+    }
+
+    function now() {
+        return Date.now ? Date.now() : new Date().getTime();
+    }
+
+
+    var Bounce = {
+        easeIn: function(t,b,c,d){
+            return c - this.easeOut(d-t, 0, c, d) + b;
+        },
+        easeOut: function(t,b,c,d){
+            if ((t/=d) < (1/2.75)) {
+                return c*(7.5625*t*t) + b;
+            } else if (t < (2/2.75)) {
+                return c*(7.5625*(t-=(1.5/2.75))*t + .75) + b;
+            } else if (t < (2.5/2.75)) {
+                return c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b;
+            } else {
+                return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
+            }
+        },
+        easeInOut: function(t,b,c,d){
+            if (t < d/2) return this.easeIn(t*2, 0, c, d) * .5 + b;
+            else return this.easeOut(t*2-d, 0, c, d) * .5 + c*.5 + b;
+        }
+    }
+</script>
 </html>
