@@ -11,6 +11,7 @@ Q
 <p>前端在模块加载时根据这个依赖表去动态加载模块,减少类似于sea.js和requirejs等在js运行时类似递归的去分析依赖关系导致的性能损耗</p>
 <p>在模块化定义时也更加符合nodejs的使用习惯,不需再包裹define</p>
 <p>在加载模块时只需</p>
+<!--lang: html
 <!doctype html>
 <html>
 <head>
@@ -29,3 +30,4 @@ Q
 </script>
 </body>
 </html>
+-->
