@@ -1,12 +1,12 @@
 "use strict";
-var Q = require('Q');
+var Q = require('core/seed');
 
 var support = Q.support = (function(){
 
     var div = document.createElement('div');
     div.innerHTML = "  <link/><table></table><a href='/a'>a</a><input type='checkbox'/>";
     var div1 = document.createElement('div');
-    div1.appendChild(div.createComment(''));
+    div1.appendChild(document.createComment(''));
 
     /**
      * 一些怪癖检查模块

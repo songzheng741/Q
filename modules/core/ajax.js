@@ -2,9 +2,10 @@
  * ajax模块
  * @module ajax
  */
+
 "use strict";
-var Q = require('Q');
-var utils = require('utils');
+var Q = require('core/seed');
+var utils = require('core/utils');
 
 var ajax = Q.ajax = {};
 
@@ -26,7 +27,7 @@ var createXhrObject = (function() {
 function json2str(json) {
    var strArr = [];
    for (var i in json) {
-       if (j == 'method' || j == 'timeout' || j == 'async' || i == 'dataType' || i == 'callback') {
+       if (i == 'method' || i == 'timeout' || i == 'async' || i == 'dataType' || i == 'callback') {
            continue;
        }
        if (json[i] == undefined || json[i] == null) {

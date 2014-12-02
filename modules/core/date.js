@@ -1,6 +1,6 @@
 
 'use strict';
-var Q = require('Q');
+var Q = require('core/seed');
 
 var dateUtils = Q.dateUtils = {
     /**

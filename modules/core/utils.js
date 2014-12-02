@@ -2,7 +2,7 @@
  * 基础工具模块
  * @module utils
  */
-var Q = require('Q');
+var Q = require('core/seed');
 var utils = Q.utils = {};
 /**
  * 迭代对象或数组

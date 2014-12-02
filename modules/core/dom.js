@@ -1,7 +1,7 @@
 "use strict";
-var Q = require('Q');
-var utils = require('utils');
-var support = require('support');
+var Q = require('core/seed');
+var utils = require('core/utils');
+var support = require('core/support');
 var DOC = document;
 /**
  * dom工具模块

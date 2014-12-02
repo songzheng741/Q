@@ -1,6 +1,9 @@
 fis.config.set('pack', {
     'Q.js': [
-        '/core/**.js'
+        '/modules/core/**.js'
+    ],
+    'QUI.js': [
+        '/modules/widget/**.js'
     ]
 });
 

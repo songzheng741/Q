@@ -1,5 +1,5 @@
 'use strict';
-var Q = require('Q');
+var Q = require('core/seed');
 
 var attr = Q.attr = {};
 var rBoolean = /^(?:autofocus|autoplay|async|checked|controls|defer|disabled|hidden|loop|multiple|open|readonly|required|scoped|selected)$/i,

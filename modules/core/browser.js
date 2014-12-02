@@ -1,5 +1,5 @@
 'use strict';
-var Q = require('Q');
+var Q = require('core/seed');
 var browser = Q.browser = (function(){
     var agent = navigator.userAgent.toLowerCase(),
         opera = window.opera;

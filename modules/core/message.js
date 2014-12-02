@@ -11,7 +11,7 @@
  */
 
 'use strict';
-var Q = require('Q');
+var Q = require('core/seed');
 var w = window;
 var DOC = self.document;
 var STORENAME = "messageQ";

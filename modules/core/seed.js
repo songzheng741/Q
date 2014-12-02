@@ -2,7 +2,8 @@
  * 所有功能挂载此对象之下
  * @module Q
  */
-var Q = {};
+var seed = {};
+var Q = seed;
 var DOC = self.document;
 
 /**
@@ -66,5 +67,5 @@ Q.console = function (msg) {
     }
 };
 
-module.exports = Q;
+module.exports = seed;
 
