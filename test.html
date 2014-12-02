@@ -1,71 +1,36 @@
-<!DOCTYPE html>
+<!doctype html>
 <html>
-<head lang="en">
-    <meta charset="UTF-8">
-    <title></title>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <title>Todo</title>
+    <script type="text/javascript" src="lib/mod.js"></script>
+    <!--[if lt IE 9]>
+    <script src="lib/html5shiv.min.js"></script>
+    <![endif]-->
 </head>
-<body style="background-color: #11183B;">
-<div><img src="./gif.jpg" /></div>
-<img src="./fireworks.gif" alt=""/>
-</body>
-<script>
-    var html = document.documentElement;
-    var last = now();
-    var t = 0;
-
-    var div = document.body.getElementsByTagName('div')[0];
-    div.style.left = '600px'
-    div.style.position = 'absolute';
-
-    div.onclick = function() {
-        alert(2);
-    }
-
-
-
-    var timer1 = setInterval(function(){
-        t += now() - last;
-        div.style.top = Math.ceil(Bounce.easeOut(t, 0, 400, 1000)) + 'px';
-        if (t >= 1000) {
-            div.style.top = '400px'; //end
-            clearInterval(timer1);
-        }
-        last = now();
-    }, 1000 / 36);
-
-
-    function getComputeStyle(elem, style) {
-        if (window.getComputedStyle) {
-            return window.getComputedStyle(elem, null)[style] || 0;
-        } else {
-            return elem.currentStyle[style] || 0;
-        }
-    }
-
-    function now() {
-        return Date.now ? Date.now() : new Date().getTime();
-    }
-
-
-    var Bounce = {
-        easeIn: function(t,b,c,d){
-            return c - this.easeOut(d-t, 0, c, d) + b;
-        },
-        easeOut: function(t,b,c,d){
-            if ((t/=d) < (1/2.75)) {
-                return c*(7.5625*t*t) + b;
-            } else if (t < (2/2.75)) {
-                return c*(7.5625*(t-=(1.5/2.75))*t + .75) + b;
-            } else if (t < (2.5/2.75)) {
-                return c*(7.5625*(t-=(2.25/2.75))*t + .9375) + b;
-            } else {
-                return c*(7.5625*(t-=(2.625/2.75))*t + .984375) + b;
-            }
-        },
-        easeInOut: function(t,b,c,d){
-            if (t < d/2) return this.easeIn(t*2, 0, c, d) * .5 + b;
-            else return this.easeOut(t*2-d, 0, c, d) * .5 + c*.5 + b;
-        }
-    }
+<body>
+<section id="todoapp">
+    <header id="header">
+        <h1>todos</h1>
+        <input id="new-todo" placeholder="What needs to be done?" autofocus>
+    </header>
+    <section id="main">
+        <input id="toggle-all" type="checkbox">
+        <label for="toggle-all">Mark all as complete</label>
+        <ul id="todo-list"></ul>
+    </section>
+    <footer id="footer"></footer>
+</section>
+<footer id="info">
+    <p>Double-click to edit a todo</p>
+    <p>Originated by <a href="https://github.com/addyosmani">Addy Osmani</a></p>
+    <p>Part of <a href="http://todomvc.com">TodoMVC</a></p>
+    <p>Modified by <a href="http://www.linkgod.net">LinkGod</a> in March 2013</p>
+</footer>
+<script type="text/javascript">
+    var Q = require('core/Q');
+    console.log(Q);
 </script>
+</body>
 </html>
