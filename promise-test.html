@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+</head>
+<body>
+<script src="lib/mod.js"></script>
+<script>
+
+    var Promise = require('core/Promise');
+    
+
+
+    setTimeout(function(){
+        console.log('1，获得商品信息');
+        callbacks.shift().call(self);
+    }, 1000);
+
+    function step2() {
+        setTimeout(function(){
+            console.log('2，根据商品信息获得店铺信息');
+            callbacks.shift().call(self);
+        }, 1000);
+    }
+
+    function step3() {
+        setTimeout(function(){
+            console.log('3，根据店铺信息获得店主信息');
+            callbacks.shift();
+        }, 1000);
+    }
+
+    var callbacks = [];
+    callbacks.push(step2);
+    callbacks.push(step3);
+</script>
+</body>
+</html>
