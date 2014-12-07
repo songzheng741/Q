@@ -17,6 +17,7 @@ Promise.prototype.resolve = function(result) {
            for (var i = 0; i < this.callbacks.length; i++) {
                var fn = this.callbacks[i];
                result.then(fn.successHandler,fn.errorHandler);
+               this.callbacks = [];
            }
         }
     }
