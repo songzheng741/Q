@@ -10,8 +10,6 @@
 
     var Promise = require('core/promise');
 
-
-
     function step1() {
         var promise = new Promise();
         setTimeout(function(){
@@ -22,7 +20,7 @@
     function step2() {
         var promise = new Promise();
         setTimeout(function(){
-            promise.resolve('步骤二')
+            promise.resolve('步骤二执行中');
         }, Math.random() * 1000);
         return promise;
     }
@@ -37,13 +35,19 @@
     step1().then(function(result){
         console.log('step1');
         console.log(result);
-        return 'step1'
+        return 'step1执行中'
     }).then(function(result){
         console.log(result);
+    }).then(function(result){
+        console.log(result);
+        console.log('step1执行结束');
     }).then(step2)
       .then(function(result){
             console.log('step2');
             console.log(result);
+       })
+       .then(function(){
+            console.log('步骤二执行结束');
        });
 
 
