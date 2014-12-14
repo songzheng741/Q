@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="lib/mod.js"></script>
+</head>
+<body>
+<script>
+
+    var Promise = require('core/promise');
+    var id = 0;
+
+    function step1() {
+        var promise = new Promise();
+        setTimeout(function() {
+            promise.resolve('step1开始执行');
+        }, Math.random() * 1000);
+        return promise;
+    }
+    function step2() {
+        var promise = new Promise();
+        setTimeout(function(){
+            promise.resolve('step2开始执行');
+        }, Math.random() * 1000);
+        return promise;
+    }
+
+
+    var promise =
+    step1()
+    .then(function(result){
+        console.log(result);
+        return 'step1执行中';
+    })
+    .then(function(result){
+        console.log(result);
+        return 'step1执行中';
+    })
+    .then(function(result){
+        console.log(result);
+        console.log('step1执行结束');
+    })
+    var promise2 = promise.then(step2)
+    .then(function(result){
+        console.log(result);
+        return 'step2执行中'
+    }).then(function(result){
+        throw new Error('step2步骤出错');
+    }).then(function(){
+        console.log('step2执行结束');
+    },
+    function(reason){
+        console.log('step2以' + reason.message +'错误执行结束');
+    });
+
+    setTimeout(function(){
+        console.log(promise2.isResolved());
+    }, 3000);
+
+</script>
+</body>
+</html>

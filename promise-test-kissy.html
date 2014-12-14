@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title></title>
+    <script src="lib/mod.js"></script>
+    <script src="promise-standalone-debug.js"></script>
+</head>
+<body>
+<script>
+    var Defer = XPromise.Defer;
+
+    function step1() {
+        var d = new Defer();
+        setTimeout(function() {
+            d.resolve('step1开始执行');
+        }, Math.random() * 1000);
+        return d.promise;
+    }
+    function step2() {
+        var d = new Defer();
+        setTimeout(function(){
+            d.resolve('step2开始执行');
+        }, Math.random() * 1000);
+        return d.promise;
+    }
+
+    var promise = step1()
+    .then(function(result){
+            console.log(result);
+            return 'step1执行中';
+    })
+    .then(function(result){
+            console.log(result);
+            return 'step1执行中';
+    })
+    .then(function(result){
+            console.log(result);
+            console.log('step1执行结束');
+    })
+    .then(step2)
+    .then(function(result){
+            console.log(result);
+            throw new Error('step2:ajax请求失败')
+    })
+    .then(function(){
+            console.log('step执行结束');
+          },
+          function(reason){
+            console.log(reason.message +',错误执行结束');
+    });
+
+    setTimeout(function(){
+        console.log(promise.isResolved());
+    }, 3000);
+
+</script>
+</body>
+</html>
