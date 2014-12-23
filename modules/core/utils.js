@@ -99,5 +99,50 @@ utils.isWindow = function(obj) {
     return obj != null && obj == obj.window;
 }
 
+utils.numberify = function(str) {
+    var c = '';
+    str.replace(/\d/g, function(m){
+        c += m;
+    })
+    return c;
+}
+
+utils.keys = function(obj) {
+    var ret = [];
+    for (var key in obj) {
+        ret.push(key);
+    }
+    return ret;
+}
+
+utils.mix = function(to, from) {
+    for (var k in from) {
+        to[k] = from[k];
+    }
+    return to
+}
+
+utils.getSuffix = function(str) {
+    var m = str.match(/\.(\w+)$/);
+    if (m) {
+        return m[1];
+    }
+}
+
+var map = Array.prototype.map
+utils.map = map ? function(arr, fn, context) {
+
+    return map.call(arr, fn, context || this)
+
+} : function(arr, fn, context) {
+    var ret = new Array(arr.length);
+    for (var i = 0; i < arr.length; i++) {
+        var el = typeof arr === 'string' ? arr.charAt(i) : arr[i];
+        if (el || i in arr) {
+            ret[i] = fn.call(context || this, el, i, arr);
+        }
+    }
+    return ret;
+}
 
 module.exports = utils;
