@@ -5,4 +5,4 @@
 (function(global) {
 
 
-})(window);
+})(window);Avatar
